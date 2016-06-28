@@ -1,0 +1,121 @@
+---
+layout: post
+title:  "Linux系统的文件描述符进程限制配置"
+date:   2015-06-05 16:23:56
+author: white clover
+categories: ops
+tags: ops
+---
+
+
+## ulimit命令使用
+
+查看某个进程当前 ulimit 所有设置: 
+
+    cat /proc/<pid>/limits 
+
+永久修改某个用户或组的配置，见文件 `/etc/security/limits.conf `
+
+可以通过 lsof -p <pid> 查看进程打开文件数
+
+
+## Linux/Centos/RHEL的进程限制，打开文件描述符限制配置
+
+
+Max Number of ulimit open file : It's provide open file resource availability in linux
+  
+Increase max number of ulimit open file in Linux.
+
+1 Step :  open the sysctl.conf  and add this line  fs.file-max = 65536
+
+vi /etc/sysctl.conf   add end of line：
+
+    fs.file-max = 65536
+
+save and exit.
+
+2 Step : vi /etc/security/limits.conf  and add below the mentioned
+
+```
+*         soft     nproc          65535
+*         hard     nproc          65535
+*         soft     nofile         65535
+*         hard     nofile         65535
+```
+
+save and exit check max open file ulimit 
+
+    [root@localhost# ulimit -a
+    core file size          (blocks, -c) 0
+    data seg size           (kbytes, -d) unlimited
+    scheduling priority             (-e) 0
+    file size               (blocks, -f) unlimited
+    pending signals                 (-i) 127358
+    max locked memory       (kbytes, -l) 64
+    max memory size         (kbytes, -m) unlimited
+    open files                      (-n) 65535
+    pipe size            (512 bytes, -p) 8
+    POSIX message queues     (bytes, -q) 819200
+    real-time priority              (-r) 0
+    stack size              (kbytes, -s) 10240
+    cpu time               (seconds, -t) unlimited
+    max user processes              (-u) 1024
+    virtual memory          (kbytes, -v) unlimited
+    file locks                      (-x) unlimited
+
+Increase max user processes in Linux
+
+Follow the step:
+
+vi /etc/security/limits.conf  and add below the menstioed
+
+```
+*          soft     nproc          65535
+*          hard     nproc          65535
+*          soft     nofile         65535
+*          hard     nofile         65535
+```
+and  vi /etc/security/limits.d/90-nproc.conf
+
+```
+*          soft     nproc          65535
+*          hard     nproc          65535
+*          soft     nofile         65535
+*          hard     nofile         65535
+```
+save and exit check the user max processes ulimit 
+
+    [root@localhost# ulimit -a
+    core file size          (blocks, -c) 0
+    data seg size           (kbytes, -d) unlimited
+    scheduling priority             (-e) 0
+    file size               (blocks, -f) unlimited
+    pending signals                 (-i) 127358
+    max locked memory       (kbytes, -l) 64
+    max memory size         (kbytes, -m) unlimited
+    open files                      (-n) 65535
+    pipe size            (512 bytes, -p) 8
+    POSIX message queues     (bytes, -q) 819200
+    real-time priority              (-r) 0
+    stack size              (kbytes, -s) 10240
+    cpu time               (seconds, -t) unlimited
+    max user processes              (-u) 65535
+    virtual memory          (kbytes, -v) unlimited
+    file locks                      (-x) unlimited
+
+
+After make changes need to reboot system.
+
+
+```
+*                soft    nofile          65536 
+*                hard    nofile          655360  
+*                soft    nproc           65536 
+*                hard    nproc           65536
+*                soft    memlock         unlimited 
+*                hard    memlock         unlimited 
+```
+
+Also check the settings in above file:
+
+    /etc/security/limits.d/90-nproc.conf
