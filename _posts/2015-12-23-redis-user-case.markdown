@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Redis的数据分析平台的用例"
+title:  "Redis在数据分析平台的用例"
 date:   2015-12-23 15:21:00
 author: White clover
 categories: database
