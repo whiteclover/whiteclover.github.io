@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "mongo的坑"
+date:   2016-02-23 06:32:00
+author: white clover
+categories: database
+tags: database
+---
+
+`mongo` 作为nosql，与cassandra与hbase的优点是支持中庸的完善方便的查询DSL语言。同样支持二级索引也是比较迷人的。
+相对couchbase来说还是二级索引做的不错。
+
+
+## Mongo 的坑
+
+mongo 在集群方面，水平拓展性能比较差。 在mongo 2.0中的库级别的锁也是比较恶心（在mongo3.0 解决了）。和myql一样，当删除记录时，mongo的分配磁盘空间并不会回收，而是标记删除，预留给后来新插入的记录使用。
+
+
+## 多语言与Mongo
+
+如果同时使用java和python编程，可能遇到的问题是，java是静态语言，强类型语言。python只有整型数据（并不会特别可以区分int long），在保存记录时python可能会把整型数据保存为mongo的int32或者int64,造成类型不安全问题。同样java的时间类与python的时间类的时区问题也是比较恶心，
